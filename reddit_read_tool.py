@@ -5,7 +5,8 @@ from superagi.tools.base_tool import BaseTool
 
 class RedditReadSchema(BaseModel):
     subreddit: str = Field(..., description="Subreddit to read from")
-    sort: str = Field(..., description="Sorting method (hot, new, top, rising)")
+    query: str = Field(..., description="Search term to query")
+    time_range: Optional[str] = Field(..., description="The time range to search in (possible values: hour, day, week, month, year, all)")
     limit: Optional[int] = Field(10, description="Limit on number of submissions to fetch")
 
 class RedditReadTool(BaseTool):
