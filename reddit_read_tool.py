@@ -1,5 +1,4 @@
 import praw
-from praw.models import TimeFilter
 from pydantic import BaseModel, Field
 from typing import Type, Optional, List
 from superagi.tools.base_tool import BaseTool, BaseLlm
@@ -55,21 +54,13 @@ class RedditReadTool(BaseTool):
             client_secret=client_secret,
             user_agent=user_agent,
         )
-    
-        time_filter = TimeFilter.all
-        if time_range == 'hour':
-            time_filter = TimeFilter.hour
-        elif time_range == 'day':
-            time_filter = TimeFilter.day
-        elif time_range == 'week':
-            time_filter = TimeFilter.week
-        elif time_range == 'month':
-            time_filter = TimeFilter.month
+        if not time_range:
+            time_range = 'all'
 
         if subreddit:
-            search_results = reddit.subreddit(subreddit).search(query, time_filter=time_filter)
+            search_results = reddit.subreddit(subreddit).search(query, time_filter=time_range)
         else:
-            search_results = reddit.subreddit("all").search(query, time_filter=time_filter)
+            search_results = reddit.subreddit("all").search(query, time_filter=time_range)
 
         submission_data = []
         for submission in search_results:
