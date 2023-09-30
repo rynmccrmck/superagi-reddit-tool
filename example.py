@@ -1,5 +1,10 @@
 import os
+import re
 import praw
+
+URL_PATTERN = r'https.*\b'
+def extract_url(text):
+    return re.findall(URL_PATTERN, text)[-1]
 
 reddit = praw.Reddit(
     client_id=os.environ.get('REDDIT_CLIENT_ID'),  
@@ -7,15 +12,25 @@ reddit = praw.Reddit(
     user_agent="todo-toronto:1.0.0 (by u/Able_Definition6250)",
 )
 
-
-for submission in reddit.subreddit("toronto").hot(limit=10):
-    if submission.title.startswith("Things to do:"):
-        break 
+matched = None
+subreddit = reddit.subreddit("toronto")
+for submission in subreddit.search("Things to do", sort="new", time_filter="week"):
+    if submission.title.lower().startswith("things to do"):
+        matched = submission
+        break
+    
 
 # TODO this could be passed to llm for safety (at a cost)
-title = submission.title
-entries = submission.selftext.split("\n")[2:]
-titles = entries[::4]
-urls = entries[2::4]
-events = zip(titles, urls)
+if matched:
+    title = matched.title
+    entries = matched.selftext.split("\n")[2:]
+    titles = entries[::4]
+    urls = entries[2::4]
+    events = zip(titles, urls)
 
+    json_results = []
+    for name,url in events:
+        print(f"{name} - {url}")
+        url_fixed = extract_url(url)
+        json_results.append({'name': name, 'url': url_fixed})
+    print(json_results)
