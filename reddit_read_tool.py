@@ -48,7 +48,9 @@ class RedditReadTool(BaseTool):
         """
         client_id = self.get_tool_config("REDDIT_CLIENT_ID")
         client_secret = self.get_tool_config("REDDIT_CLIENT_SECRET")
-        user_agent = self.get_tool_config("REDDIT_CLIENT_USERAGENT", "todo-app:1.0.0 (by u/youruser")
+        user_agent = self.get_tool_config("REDDIT_CLIENT_USERAGENT")
+        if not user_agent:
+            user_agent = "todo-app:1.0.0 (by u/youruser)"
 
         reddit = praw.Reddit(
             client_id=client_id,
@@ -59,9 +61,9 @@ class RedditReadTool(BaseTool):
             time_range = 'all'
 
         if subreddit:
-            search_results = reddit.subreddit(subreddit).search(query, time_filter=time_range)
+            search_results = reddit.subreddit(subreddit).search(query, time_filter=time_range, limit=limit)
         else:
-            search_results = reddit.subreddit("all").search(query, time_filter=time_range)
+            search_results = reddit.subreddit("all").search(query, time_filter=time_range, limit=limit)
 
         submission_data = []
         for submission in search_results:
