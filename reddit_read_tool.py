@@ -2,7 +2,7 @@ import praw
 from praw.models import TimeFilter
 from pydantic import BaseModel, Field
 from typing import Type, Optional, List
-from superagi.tools.base_tool import BaseTool
+from superagi.tools.base_tool import BaseTool, BaseLlm
 
 class RedditReadSchema(BaseModel):
     subreddit: str = Field(..., description="Subreddit to read from")
