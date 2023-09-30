@@ -1,7 +1,7 @@
 import praw
 from pydantic import BaseModel, Field
-from typing import Type, Optional, List
-from superagi.tools.base_tool import BaseTool, BaseLlm
+from typing import Any, Type, Optional, List
+from superagi.tools.base_tool import BaseTool
 
 class RedditReadSchema(BaseModel):
     subreddit: str = Field(..., description="Subreddit to read from")
@@ -17,7 +17,7 @@ class RedditReadTool(BaseTool):
         description : The description.
         args_schema : The args schema.
     """
-    llm: Optional[BaseLlm] = None
+    llm: Optional[Any] = None
     name = "RedditRead"
     description = (
         "A tool for performing a Reddit search and extracting submissions and comments."
